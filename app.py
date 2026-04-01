@@ -13,9 +13,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("FORMULÁRIO DE DIAGNÓSTICO – PRESTADORES PJ")
-st.write("Objetivo:Este formulário tem como objetivo coletar percepções sobre a prestação de serviços e a interação profissional com a empresa.
-
-As respostas são anônimas e serão utilizadas exclusivamente para melhoria de processos e da comunicação entre as partes..")
+st.write("Objetivo:Este formulário tem como objetivo coletar percepções sobre a prestação de serviços e a interação profissional com a empresa. As respostas são anônimas e serão utilizadas exclusivamente para melhoria de processos e da comunicação entre as partes..")
 
 # SEÇÃO 1
 with st.expander("SEÇÃO 1 – DADOS INICIAIS", expanded=True):
