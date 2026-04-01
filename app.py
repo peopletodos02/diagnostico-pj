@@ -112,7 +112,6 @@ if st.button("ENVIAR"):
         status.empty()
 
         if not erro_grave:
-            st.snow()
             st.success("Resposta enviada com sucesso! Agradecemos a sua colaboração.")
         else:
             st.error("Erro no envio. Verifique a conexao.")
