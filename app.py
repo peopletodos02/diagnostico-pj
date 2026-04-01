@@ -55,7 +55,7 @@ secoes_dados = {
     "SECAO 4 – COMUNICACAO": ["Mudancas sao comunicadas de forma clara", "Existe transparencia nas decisoes que impactam as entregas", "Informacoes sao disponibilizadas no momento adequado", "Ha facilidade de comunicacao com as pessoas envolvidas"],
     "SECAO 5 – CLAREZA DOS SERVICOS PRESTADOS": ["As demandas e entregas sao definidas de forma clara", "As expectativas de entrega sao bem definidas", "A comunicacao contribui para execucao das entregas"],
     "SECAO 6 – RETORNO SOBRE ENTREGAS": ["Recebo feedback sobre a aderencia das entregas", "A ausencia de feedback impacta a qualidade das entregas"],
-    "SECAO 7 – AUTONOMIA (ESSENCIAL PJ)": ["Tenho autonomia na execucao das entregas", "Existe confianca na forma de execucao", "Ha excesso de processos ou controles", "Existe interferencia excessiva na execucao"],
+    "SECAO 7 – AUTONOMIA": ["Tenho autonomia na execucao das entregas", "Existe confianca na forma de execucao", "Ha excesso de processos ou controles", "Existe interferencia excessiva na execucao"],
     "SECAO 8 – DEMANDAS E PRAZOS": ["O volume de operacoes realizadas e compativel com os prazos definidos", "Os prazos sao adequados para execucao das entregas"],
     "SECAO 9 – RELACIONAMENTOS": ["Evitei interacoes devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos sao resolvidos adequadamente"],
     "SECAO 10 – SITUACOES CRITICAS": ["Vivenciei situacoes graves (agressoes, ameacas etc.)", "Passei por situacoes de risco", "Alguma situacao causou impacto significativo"],
