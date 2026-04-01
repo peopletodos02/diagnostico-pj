@@ -5,12 +5,32 @@ from datetime import datetime
 # Configuracao da pagina
 st.set_page_config(page_title="Diagnostico PJ", layout="centered")
 
-# Estilo visual Verde Oliva
-st.markdown("""
+# Estilo visual com a cor #01B59C
+st.markdown(f"""
     <style>
-    .stApp { background-color: #f0f7ee; }
-    h1, h2, h3 { color: #2e4d23; font-weight: bold; }
-    .stButton>button { background-color: #4c6340; color: white; width: 100%; font-weight: bold; }
+    /* Cor de fundo da pagina */
+    .stApp {{ background-color: #f0f7ee; }}
+    
+    /* Cor dos Titulos e Subtitulos */
+    h1, h2, h3, .stSubheader {{ color: #01B59C !important; font-weight: bold; }}
+    
+    /* Customizacao do Botao Enviar */
+    .stButton>button {{ 
+        background-color: #01B59C !important; 
+        color: white !important; 
+        width: 100%; 
+        font-weight: bold; 
+        border: none;
+        padding: 0.5rem;
+    }}
+    
+    /* Cor da barra do slider (respostas) */
+    .stSlider [data-baseweb="slider"] {{
+        background-color: transparent;
+    }}
+    div[data-baseweb="slider"] > div > div {{
+        background-color: #01B59C !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
