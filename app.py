@@ -16,7 +16,7 @@ st.markdown("""
 
 # Cabecalho e Objetivo conforme o documento oficial
 st.title("FORMULARIO DE DIAGNOSTICO – PRESTADORES PJ")
-[span_3](start_span)st.write("**Objetivo:** Este formulario tem como objetivo coletar percepcoes sobre a prestacao de servicos e a interacao profissional com a empresa. As respostas sao anonimas e serao utilizadas exclusivamente para melhoria de processos e da comunicacao entre as partes.[span_3](end_span)")
+[span_3](start_span)st.write("**Objetivo:** Este formulario tem como objetivo coletar percepcoes sobre a prestacao de servicos e a interacao profissional com a empresa. As respostas sao anonimas e serao utilizadas exclusivamente para melhoria de processos e da comunicacao entre as partes.")
 
 # --- SECAO 1: DADOS INICIAIS ---
 with st.expander("SECAO 1 – DADOS INICIAIS", expanded=True):
