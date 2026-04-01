@@ -1,11 +1,12 @@
 import streamlit as st
 import requests
 from datetime import datetime
+import pytz
 
 # Configuracao da pagina
 st.set_page_config(page_title="Diagnostico PJ", layout="centered")
 
-# Estilo visual Verde Oliva
+# Estilo visual limpo (Padrao Streamlit)
 st.markdown("""
     <style>
     .stApp { background-color: #f0f7ee; }
@@ -14,12 +15,11 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Titulo e Objetivo
+# Cabecalho e Objetivo conforme o documento oficial
 st.title("FORMULARIO DE DIAGNOSTICO – PRESTADORES PJ")
-st.write("Objetivo: Este formulario tem como objetivo coletar percepcoes sobre a prestacao de servicos e a interacao profissional com a empresa.")
-st.write("As respostas sao anonimas e serao utilizadas exclusivamente para melhoria de processos.")
+st.write("**Objetivo:** Este formulario tem como objetivo coletar percepcoes sobre a prestacao de servicos e a interacao profissional com a empresa. As respostas sao anonimas e serao utilizadas exclusivamente para melhoria de processos e da comunicacao entre as partes.")
 
-# SECAO 1: DADOS INICIAIS
+# --- SECAO 1: DADOS INICIAIS ---
 with st.expander("SECAO 1 – DADOS INICIAIS", expanded=True):
     genero_sel = st.radio("Qual e seu genero?", ["Feminino", "Masculino", "Nao binario", "Prefiro nao responder", "Outro"])
     
@@ -40,7 +40,7 @@ with st.expander("SECAO 1 – DADOS INICIAIS", expanded=True):
         "Seguranca/Governanca", "Suporte"
     ])
 
-# EXPLICACAO DA ESCALA
+# --- EXPLICACAO DA ESCALA ---
 st.markdown("---")
 st.subheader("ESCALA PADRAO (USAR EM TODAS AS PERGUNTAS ABAIXO)")
 st.write("0 = Nunca | 1 = Raramente | 2 = As vezes | 3 = Frequentemente | 4 = Sempre")
@@ -48,7 +48,7 @@ st.write("0 = Nunca | 1 = Raramente | 2 = As vezes | 3 = Frequentemente | 4 = Se
 def quest(label):
     return st.select_slider(label, options=[0, 1, 2, 3, 4])
 
-# ESTRUTURA DAS 12 SECOES
+# --- ESTRUTURA DAS 12 SECOES ---
 secoes_dados = {
     "SECAO 2 – CONDUTAS E RESPEITO": ["Presenciei ou vivenciei comentarios ofensivos ou inadequados no ambiente de atuacao", "Sinto seguranca para relatar situacoes de desrespeito", "Existe canal seguro e sigiloso para relato", "Situacoes de desrespeito sao tratadas adequadamente", "A empresa demonstra compromisso com ambiente respeitoso"],
     "SECAO 3 – RELACIONAMENTO PROFISSIONAL": ["Existe colaboracao adequada entre as partes envolvidas", "Os pontos de contato fornecem informacoes necessarias", "Existem canais para tratar duvidas ou ajustes", "O ambiente de interacao e respeitoso e colaborativo"],
@@ -72,23 +72,31 @@ for titulo, perguntas in secoes_dados.items():
 st.divider()
 sugestoes = st.text_area("SECAO FINAL – Deixe sugestões ou pontos de atencao que considere relevantes:")
 
-# LOGICA DE ENVIO
+# --- LOGICA DE ENVIO ---
 if st.button("ENVIAR"):
+    # URL gerada pelo Power Automate (Substitua entre as aspas)
     URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
     
     if URL_WEBHOOK == "COLE_SUA_URL_AQUI":
-        st.warning("Por favor coloque a URL do Power Automate no codigo")
+        st.warning("Por favor coloque a URL do Power Automate no codigo para enviar")
     else:
+        # Barra de progresso para feedback visual
         barra = st.progress(0)
         status = st.empty()
-        id_formulario = datetime.now().strftime("%Y%m%d%H%M%S")
-        data_envio = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        
+        # Ajuste de Horario Sao Paulo
+        fuso_sp = pytz.timezone('America/Sao_Paulo')
+        agora_sp = datetime.now(fuso_sp)
+        
+        id_formulario = agora_sp.strftime("%Y%m%d%H%M%S")
+        data_hora_envio = agora_sp.strftime("%d/%m/%Y %H:%M:%S")
         
         lista_perguntas = list(respostas_finais.items())
         total = len(lista_perguntas)
-        erro_grave = False
+        erro_no_envio = False
 
-        for i, (pergunta, nota) in enumerate(lista_perguntas):
+        for i, (p_texto, nota_val) in enumerate(lista_perguntas):
+            # Atualizando a barra de progresso
             percentual = (i + 1) / total
             barra.progress(percentual)
             status.text(f"Enviando dados... {i+1} de {total}")
@@ -98,20 +106,21 @@ if st.button("ENVIAR"):
                 "Genero": genero,
                 "Setor": setor,
                 "Tipo_Servico": tipo_servico,
-                "Pergunta": pergunta,
-                "Nota": nota,
+                "Pergunta": p_texto,
+                "Nota": nota_val,
                 "Sugestoes": sugestoes,
-                "Data_Hora": data_envio
+                "Data_Hora": data_hora_envio
             }
             try:
                 requests.post(URL_WEBHOOK, json=payload)
             except:
-                erro_grave = True
+                erro_no_envio = True
 
+        # Limpando elementos de progresso
         barra.empty()
         status.empty()
 
-        if not erro_grave:
+        if not erro_no_envio:
             st.success("Resposta enviada com sucesso! Agradecemos a sua colaboração.")
         else:
-            st.error("Erro no envio. Verifique a conexao.")
+            st.error("Ocorreu um problema ao enviar sua resposta. Verifique a conexao.")
