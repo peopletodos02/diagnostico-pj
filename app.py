@@ -73,8 +73,8 @@ st.divider()
 sugestoes = st.text_area("SECAO FINAL – Deixe sugestoes ou pontos de atencao que considere relevantes:")
 
 # ENVIO PARA O POWER AUTOMATE
-if st.button("Enviar Diagnostico"):
-    URL_WEBHOOK = "SUA_URL_AQUI"
+if st.button("Enviar"):
+    URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
     
     if URL_WEBHOOK == "SUA_URL_AQUI":
         st.warning("Por favor, configure a URL do Power Automate no codigo.")
@@ -97,6 +97,6 @@ if st.button("Enviar Diagnostico"):
                 erro = True
         
         if not erro:
-            st.success("Diagnostico enviado com sucesso!")
+            st.success("Enviado com sucesso!")
         else:
             st.error("Erro ao enviar os dados.")
