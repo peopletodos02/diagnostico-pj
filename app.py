@@ -15,14 +15,12 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Cabeçalho e Objetivo
 st.title("FORMULÁRIO DE DIAGNÓSTICO – PRESTADORES PJ")
-st.write("**Objetivo:** Este formulário tem como objetivo coletar percepções sobre a prestação de serviços e a interação profissional com a empresa. As respostas são anônimas e serão utilizadas exclusivamente para melhoria de processos e da comunicação entre as partes.")
+st.write("**Objetivo:** Coleta de percepções para melhoria de processos e comunicação. Respostas anônimas.")
 
 # --- SEÇÃO 1: DADOS INICIAIS ---
 with st.expander("SEÇÃO 1 – DADOS INICIAIS", expanded=True):
     genero_sel = st.radio("Qual é seu gênero?", ["Feminino", "Masculino", "Não binário", "Prefiro não responder", "Outro"])
-    
     genero = genero_sel
     if genero_sel == "Outro":
         genero = st.text_input("Por favor, especifique seu gênero:")
@@ -38,15 +36,10 @@ with st.expander("SEÇÃO 1 – DADOS INICIAIS", expanded=True):
         "Segurança/Governança", "Suporte"
     ])
 
-# --- EXPLICAÇÃO DA ESCALA ---
 st.markdown("---")
-st.subheader("ESCALA PADRÃO (UTILIZE EM TODAS AS PERGUNTAS ABAIXO)")
-st.write("0 = Nunca | 1 = Raramente | 2 = Às vezes | 3 = Frequentemente | 4 = Sempre")
+st.subheader("ESCALA PADRÃO (0 a 4)")
 
-def quest(label):
-    return st.select_slider(label, options=[0, 1, 2, 3, 4])
-
-# --- ESTRUTURA DAS 12 SEÇÕES ---
+# --- DICIONÁRIO DE SEÇÕES ---
 secoes_dados = {
     "SEÇÃO 2 – CONDUTAS E RESPEITO": ["Presenciei ou vivenciei comentários ofensivos ou inadequados no ambiente de atuação", "Sinto segurança para relatar situações de desrespeito", "Existe canal seguro e sigiloso para relato", "Situações de desrespeito são tratadas adequadamente", "A empresa demonstra compromisso com um ambiente respeitoso"],
     "SEÇÃO 3 – RELACIONAMENTO PROFISSIONAL": ["Existe colaboração adequada entre as partes envolvidas", "Os pontos de contato fornecem informações necessárias", "Existem canais para tratar dúvidas ou ajustes", "O ambiente de interação é respeitoso e colaborativo"],
@@ -57,62 +50,72 @@ secoes_dados = {
     "SEÇÃO 8 – DEMANDAS E PRAZOS": ["O volume de operações realizadas é compatível com os prazos definidos", "Os prazos são adequados para a execução das entregas"],
     "SEÇÃO 9 – RELACIONAMENTOS": ["Evitei interações devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos são resolvidos adequadamente"],
     "SEÇÃO 10 – SITUAÇÕES CRÍTICAS": ["Vivenciei situações graves (agressões, ameaças etc.)", "Passei por situações de risco", "Alguma situação causou impacto significativo"],
-    "SEÇÃO 11 – CONDIÇÕES DE EXECUÇÃO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
+    "SEÇÃO 11 – CONDIÇÕES DE EXECUCAO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
     "SEÇÃO 12 – FORMATO DE ATUAÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
 }
 
+# Criamos um dicionário para armazenar se a seção foi "visitada"
 respostas_finais = {}
+secoes_respondidas = {}
+
 for titulo, perguntas in secoes_dados.items():
     with st.expander(titulo):
+        # Checkbox invisível para marcar que o usuário abriu e confirmou a seção
+        confirmar = st.checkbox(f"Confirmo que respondi a {titulo}", key=f"check_{titulo}")
+        secoes_respondidas[titulo] = confirmar
+        
         for p in perguntas:
-            respostas_finais[p] = quest(p)
+            respostas_finais[p] = st.select_slider(p, options=[0, 1, 2, 3, 4], key=f"slider_{p}")
 
 st.divider()
-sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção que considere relevantes:")
+sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção relevantes:")
 
-# --- LÓGICA DE ENVIO ---
+# --- LÓGICA DE VALIDAÇÃO E ENVIO ---
 if st.button("ENVIAR"):
-    URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
+    # 1. Verificar se todas as seções foram marcadas como confirmadas
+    secoes_faltantes = [s for s, respondida in secoes_respondidas.items() if not respondida]
     
-    if URL_WEBHOOK == "COLE_SUA_URL_AQUI":
-        st.warning("Por favor, configure a URL do Power Automate no código.")
+    if secoes_faltantes:
+        st.error("⚠️ Atenção! Você precisa revisar e marcar a confirmação nas seguintes seções antes de enviar:")
+        for faltante in secoes_faltantes:
+            st.write(f"- {faltante}")
     else:
-        barra = st.progress(0)
-        status = st.empty()
+        # 2. Se tudo estiver OK, prossegue com o envio
+        URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
         
-        fuso_sp = pytz.timezone('America/Sao_Paulo')
-        agora_sp = datetime.now(fuso_sp)
-        
-        id_formulario = agora_sp.strftime("%Y%m%d%H%M%S")
-        data_hora_envio = agora_sp.strftime("%d/%m/%Y %H:%M:%S")
-        
-        lista_perguntas = list(respostas_finais.items())
-        total = len(lista_perguntas)
-        erro_no_envio = False
-
-        for i, (p_texto, nota_val) in enumerate(lista_perguntas):
-            percentual = (i + 1) / total
-            barra.progress(percentual)
-            status.text(f"Enviando dados... {i+1} de {total}")
-            
-            payload = {
-                "ID": id_formulario,
-                "Genero": genero,
-                "Setor": setor,
-                "Pergunta": p_texto,
-                "Nota": nota_val,
-                "Sugestoes": sugestoes,
-                "Data_Hora": data_hora_envio
-            }
-            try:
-                requests.post(URL_WEBHOOK, json=payload)
-            except:
-                erro_no_envio = True
-
-        barra.empty()
-        status.empty()
-
-        if not erro_no_envio:
-            st.success("Resposta enviada com sucesso! Agradecemos a sua colaboração.")
+        if URL_WEBHOOK == "COLE_SUA_URL_AQUI":
+            st.warning("Configure a URL do Power Automate.")
         else:
-            st.error("Ocorreu um problema ao enviar sua resposta. Verifique a conexão.")
+            barra = st.progress(0)
+            status = st.empty()
+            fuso_sp = pytz.timezone('America/Sao_Paulo')
+            agora_sp = datetime.now(fuso_sp)
+            id_formulario = agora_sp.strftime("%Y%m%d%H%M%S")
+            data_hora_envio = agora_sp.strftime("%d/%m/%Y %H:%M:%S")
+            
+            lista_perguntas = list(respostas_finais.items())
+            total = len(lista_perguntas)
+            erro = False
+
+            for i, (p_texto, nota_val) in enumerate(lista_perguntas):
+                percentual = (i + 1) / total
+                barra.progress(percentual)
+                status.text(f"Enviando... {i+1} de {total}")
+                
+                payload = {
+                    "ID": id_formulario, "Genero": genero, "Setor": setor,
+                    "Pergunta": p_texto, "Nota": nota_val, "Sugestoes": sugestoes,
+                    "Data_Hora": data_hora_envio
+                }
+                try:
+                    requests.post(URL_WEBHOOK, json=payload)
+                except:
+                    erro = True
+
+            barra.empty()
+            status.empty()
+
+            if not erro:
+                st.success("Resposta enviada com sucesso!")
+            else:
+                st.error("Erro na conexão. Tente novamente.")
