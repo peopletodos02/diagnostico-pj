@@ -26,8 +26,6 @@ with st.expander("SECAO 1 – DADOS INICIAIS", expanded=True):
     genero = genero_sel
     if genero_sel == "Outro":
         genero = st.text_input("Por favor, especifique seu genero:")
-
-    tipo_servico = st.text_input("Qual tipo de prestacao de servico voce realiza?")
     
     setor = st.selectbox("Para qual area voce presta servico?", [
         "Assessoria da Presidencia", "Checkout", "Consultoria", "Contabilidade", 
