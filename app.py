@@ -37,6 +37,13 @@ with st.expander("SEÇÃO 1 – DADOS INICIAIS", expanded=True):
         "Regional Interior", "Regional Equatorial", "Regional São Paulo/Minas", 
         "Segurança/Governança", "Suporte"
     ])
+ # --- EXPLICACAO DA ESCALA ---
+st.markdown("---")
+st.subheader("ESCALA PADRAO (USAR EM TODAS AS PERGUNTAS ABAIXO)")
+st.write("0 = Nunca | 1 = Raramente | 2 = As vezes | 3 = Frequentemente | 4 = Sempre")
+
+def quest(label):
+    return st.select_slider(label, options=[0, 1, 2, 3, 4])   
 
 st.markdown("---")
 st.subheader("ESCALA PADRÃO (0 a 4)")
