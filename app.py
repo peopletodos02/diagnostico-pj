@@ -103,7 +103,6 @@ if st.button("ENVIAR"):
                 "ID": id_formulario,
                 "Genero": genero,
                 "Setor": setor,
-                "Tipo_Servico": tipo_servico,
                 "Pergunta": p_texto,
                 "Nota": nota_val,
                 "Sugestoes": sugestoes,
