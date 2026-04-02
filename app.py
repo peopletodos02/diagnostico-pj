@@ -3,10 +3,10 @@ import requests
 from datetime import datetime
 import pytz
 
-# Configuracao da pagina
-st.set_page_config(page_title="Diagnostico PJ", layout="centered")
+# Configuração da página
+st.set_page_config(page_title="Diagnóstico PJ", layout="centered")
 
-# Estilo visual limpo (Padrao Streamlit)
+# Estilo visual limpo
 st.markdown("""
     <style>
     .stApp { background-color: #f0f7ee; }
@@ -15,50 +15,50 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Cabecalho e Objetivo conforme o documento oficial
-st.title("FORMULARIO DE DIAGNOSTICO – PRESTADORES PJ")
-st.write("**Objetivo:** Este formulario tem como objetivo coletar percepcoes sobre a prestacao de servicos e a interacao profissional com a empresa. As respostas sao anonimas e serao utilizadas exclusivamente para melhoria de processos e da comunicacao entre as partes.")
+# Cabeçalho e Objetivo
+st.title("FORMULÁRIO DE DIAGNÓSTICO – PRESTADORES PJ")
+st.write("**Objetivo:** Este formulário tem como objetivo coletar percepções sobre a prestação de serviços e a interação profissional com a empresa. As respostas são anônimas e serão utilizadas exclusivamente para melhoria de processos e da comunicação entre as partes.")
 
-# --- SECAO 1: DADOS INICIAIS ---
-with st.expander("SECAO 1 – DADOS INICIAIS", expanded=True):
-    genero_sel = st.radio("Qual e seu genero?", ["Feminino", "Masculino", "Nao binario", "Prefiro nao responder", "Outro"])
+# --- SEÇÃO 1: DADOS INICIAIS ---
+with st.expander("SEÇÃO 1 – DADOS INICIAIS", expanded=True):
+    genero_sel = st.radio("Qual é seu gênero?", ["Feminino", "Masculino", "Não binário", "Prefiro não responder", "Outro"])
     
     genero = genero_sel
     if genero_sel == "Outro":
-        genero = st.text_input("Por favor, especifique seu genero:")
-    
-    setor = st.selectbox("Para qual area voce presta servico?", [
-        "Assessoria da Presidencia", "Checkout", "Consultoria", "Contabilidade", 
+        genero = st.text_input("Por favor, especifique seu gênero:")
+
+    setor = st.selectbox("Para qual área você presta serviço?", [
+        "Assessoria da Presidência", "Checkout", "Consultoria", "Contabilidade", 
         "CRM Estrutural", "CTN Brasil", "CTN Global", "CTN Vendedores (App)", 
-        "Dados", "Desenvolvimento/Produto TI", "Engenharia", "Financas Estrategicas", 
-        "Financeiro", "FP&A", "Inteligencia/BI", "Melhoria Continua", "Motor RCE", 
-        "Operacoes de Tecnologia", "Pessoas e Cultura", "Presidencia", "Produto", 
-        "Projetos", "Qualidade", "Regional Centro Sul", "Regional Costa Leste", 
-        "Regional Interior", "Regional Equatorial", "Regional Sao Paulo/Minas", 
-        "Seguranca/Governanca", "Suporte"
+        "Dados", "Desenvolvimento/Produto TI", "Engenharia", "Finanças Estratégicas", 
+        "Financeiro", "FP&A", "Inteligência/BI", "Melhoria Contínua", "Motor RCE", 
+        "Operações de Tecnologia", "Pessoas e Cultura", "Presidência", "Produto", 
+        "Projetos", "Qualidade", "Regional Centro-Sul", "Regional Costa Leste", 
+        "Regional Interior", "Regional Equatorial", "Regional São Paulo/Minas", 
+        "Segurança/Governança", "Suporte"
     ])
 
-# --- EXPLICACAO DA ESCALA ---
+# --- EXPLICAÇÃO DA ESCALA ---
 st.markdown("---")
-st.subheader("ESCALA PADRAO (USAR EM TODAS AS PERGUNTAS ABAIXO)")
-st.write("0 = Nunca | 1 = Raramente | 2 = As vezes | 3 = Frequentemente | 4 = Sempre")
+st.subheader("ESCALA PADRÃO (UTILIZE EM TODAS AS PERGUNTAS ABAIXO)")
+st.write("0 = Nunca | 1 = Raramente | 2 = Às vezes | 3 = Frequentemente | 4 = Sempre")
 
 def quest(label):
     return st.select_slider(label, options=[0, 1, 2, 3, 4])
 
-# --- ESTRUTURA DAS 12 SECOES ---
+# --- ESTRUTURA DAS 12 SEÇÕES ---
 secoes_dados = {
-    "SECAO 2 – CONDUTAS E RESPEITO": ["Presenciei ou vivenciei comentarios ofensivos ou inadequados no ambiente de atuacao", "Sinto seguranca para relatar situacoes de desrespeito", "Existe canal seguro e sigiloso para relato", "Situacoes de desrespeito sao tratadas adequadamente", "A empresa demonstra compromisso com ambiente respeitoso"],
-    "SECAO 3 – RELACIONAMENTO PROFISSIONAL": ["Existe colaboracao adequada entre as partes envolvidas", "Os pontos de contato fornecem informacoes necessarias", "Existem canais para tratar duvidas ou ajustes", "O ambiente de interacao e respeitoso e colaborativo"],
-    "SECAO 4 – COMUNICACAO": ["Mudancas sao comunicadas de forma clara", "Existe transparencia nas decisoes que impactam as entregas", "Informacoes sao disponibilizadas no momento adequado", "Ha facilidade de comunicacao com as pessoas envolvidas"],
-    "SECAO 5 – CLAREZA DOS SERVICOS PRESTADOS": ["As demandas e entregas sao definidas de forma clara", "As expectativas de entrega sao bem definidas", "A comunicacao contribui para execucao das entregas"],
-    "SECAO 6 – RETORNO SOBRE ENTREGAS": ["Recebo feedback sobre a aderencia das entregas", "A ausencia de feedback impacta a qualidade das entregas"],
-    "SECAO 7 – AUTONOMIA": ["Tenho autonomia na execucao das entregas", "Existe confianca na forma de execucao", "Ha excesso de processos ou controles", "Existe interferencia excessiva na execucao"],
-    "SECAO 8 – DEMANDAS E PRAZOS": ["O volume de operacoes realizadas e compativel com os prazos definidos", "Os prazos sao adequados para execucao das entregas"],
-    "SECAO 9 – RELACIONAMENTOS": ["Evitei interacoes devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos sao resolvidos adequadamente"],
-    "SECAO 10 – SITUACOES CRITICAS": ["Vivenciei situacoes graves (agressoes, ameacas etc.)", "Passei por situacoes de risco", "Alguma situacao causou impacto significativo"],
-    "SECAO 11 – CONDICOES DE EXECUCAO": ["As condicoes de execucao dificultam a comunicacao", "A distancia impacta a troca de informacoes"],
-    "SECAO 12 – FORMATO DE ATUACAO": ["O formato (remoto/presencial) impacta a comunicacao", "Recebo informacoes suficientes mesmo a distancia"]
+    "SEÇÃO 2 – CONDUTAS E RESPEITO": ["Presenciei ou vivenciei comentários ofensivos ou inadequados no ambiente de atuação", "Sinto segurança para relatar situações de desrespeito", "Existe canal seguro e sigiloso para relato", "Situações de desrespeito são tratadas adequadamente", "A empresa demonstra compromisso com um ambiente respeitoso"],
+    "SEÇÃO 3 – RELACIONAMENTO PROFISSIONAL": ["Existe colaboração adequada entre as partes envolvidas", "Os pontos de contato fornecem informações necessárias", "Existem canais para tratar dúvidas ou ajustes", "O ambiente de interação é respeitoso e colaborativo"],
+    "SEÇÃO 4 – COMUNICAÇÃO": ["Mudanças são comunicadas de forma clara", "Existe transparência nas decisões que impactam as entregas", "Informações são disponibilizadas no momento adequado", "Há facilidade de comunicação com as pessoas envolvidas"],
+    "SEÇÃO 5 – CLAREZA DOS SERVIÇOS PRESTADOS": ["As demandas e entregas são definidas de forma clara", "As expectativas de entrega são bem definidas", "A comunicação contribui para a execução das entregas"],
+    "SEÇÃO 6 – RETORNO SOBRE ENTREGAS": ["Recebo feedback sobre a aderência das entregas", "A ausência de feedback impacta a qualidade das entregas"],
+    "SEÇÃO 7 – AUTONOMIA (ESSENCIAL PJ)": ["Tenho autonomia na execução das entregas", "Existe confiança na forma de execução", "Há excesso de processos ou controles", "Existe interferência excessiva na execução"],
+    "SEÇÃO 8 – DEMANDAS E PRAZOS": ["O volume de operações realizadas é compatível com os prazos definidos", "Os prazos são adequados para a execução das entregas"],
+    "SEÇÃO 9 – RELACIONAMENTOS": ["Evitei interações devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos são resolvidos adequadamente"],
+    "SEÇÃO 10 – SITUAÇÕES CRÍTICAS": ["Vivenciei situações graves (agressões, ameaças etc.)", "Passei por situações de risco", "Alguma situação causou impacto significativo"],
+    "SEÇÃO 11 – CONDIÇÕES DE EXECUÇÃO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
+    "SEÇÃO 12 – FORMATO DE ATUAÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
 }
 
 respostas_finais = {}
@@ -68,21 +68,18 @@ for titulo, perguntas in secoes_dados.items():
             respostas_finais[p] = quest(p)
 
 st.divider()
-sugestoes = st.text_area("SECAO FINAL – Deixe sugestões ou pontos de atencao que considere relevantes:")
+sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção que considere relevantes:")
 
-# --- LOGICA DE ENVIO ---
+# --- LÓGICA DE ENVIO ---
 if st.button("ENVIAR"):
-    # URL gerada pelo Power Automate (Substitua entre as aspas)
     URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
     
     if URL_WEBHOOK == "COLE_SUA_URL_AQUI":
-        st.warning("Por favor coloque a URL do Power Automate no codigo para enviar")
+        st.warning("Por favor, configure a URL do Power Automate no código.")
     else:
-        # Barra de progresso para feedback visual
         barra = st.progress(0)
         status = st.empty()
         
-        # Ajuste de Horario Sao Paulo
         fuso_sp = pytz.timezone('America/Sao_Paulo')
         agora_sp = datetime.now(fuso_sp)
         
@@ -94,7 +91,6 @@ if st.button("ENVIAR"):
         erro_no_envio = False
 
         for i, (p_texto, nota_val) in enumerate(lista_perguntas):
-            # Atualizando a barra de progresso
             percentual = (i + 1) / total
             barra.progress(percentual)
             status.text(f"Enviando dados... {i+1} de {total}")
@@ -113,11 +109,10 @@ if st.button("ENVIAR"):
             except:
                 erro_no_envio = True
 
-        # Limpando elementos de progresso
         barra.empty()
         status.empty()
 
         if not erro_no_envio:
             st.success("Resposta enviada com sucesso! Agradecemos a sua colaboração.")
         else:
-            st.error("Ocorreu um problema ao enviar sua resposta. Verifique a conexao.")
+            st.error("Ocorreu um problema ao enviar sua resposta. Verifique a conexão.")
