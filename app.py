@@ -12,6 +12,8 @@ st.markdown("""
     .stApp { background-color: #f0f7ee; }
     h1, h2, h3 { color: #2e4d23; font-weight: bold; }
     .stButton>button { background-color: #4c6340; color: white; width: 100%; font-weight: bold; }
+    /* Ajuste para reduzir o espacamento entre elementos */
+    .block-container { padding-top: 2rem; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -44,14 +46,14 @@ secoes_dados = {
     "SEÇÃO 2 – CONDUTAS E RESPEITO": ["Presenciei ou vivenciei comentários ofensivos ou inadequados no ambiente de atuação", "Sinto segurança para relatar situações de desrespeito", "Existe canal seguro e sigiloso para relato", "Situações de desrespeito são tratadas adequadamente", "A empresa demonstra compromisso com um ambiente respeitoso"],
     "SEÇÃO 3 – RELACIONAMENTO PROFISSIONAL": ["Existe colaboração adequada entre as partes envolvidas", "Os pontos de contato fornecem informações necessárias", "Existem canais para tratar dúvidas ou ajustes", "O ambiente de interação é respeitoso e colaborativo"],
     "SEÇÃO 4 – COMUNICAÇÃO": ["Mudanças são comunicadas de forma clara", "Existe transparência nas decisões que impactam as entregas", "Informações são disponibilizadas no momento adequado", "Há facilidade de comunicação com as pessoas envolvidas"],
-    "SEÇÃO 5 – CLAREZA DOS SERVIÇOS PRESTADOS": ["As demandas e entregas são definidas de forma clara", "As expectativas de entrega são bem definidas", "A comunicação contribui para a execução das entregas"],
+    "SEÇÃO 5 – CLAREZA DOS SERVIÇOS PRESTADOS": ["As demandas e entregas são definidas de forma clara", "As expectativas de entrega é bem definidas", "A comunicação contribui para a execução das entregas"],
     "SEÇÃO 6 – RETORNO SOBRE ENTREGAS": ["Recebo feedback sobre a aderência das entregas", "A ausência de feedback impacta a qualidade das entregas"],
     "SEÇÃO 7 – AUTONOMIA (ESSENCIAL PJ)": ["Tenho autonomia na execução das entregas", "Existe confiança na forma de execução", "Há excesso de processos ou controles", "Existe interferência excessiva na execução"],
     "SEÇÃO 8 – DEMANDAS E PRAZOS": ["O volume de operações realizadas é compatível com os prazos definidos", "Os prazos são adequados para a execução das entregas"],
     "SEÇÃO 9 – RELACIONAMENTOS": ["Evitei interações devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos são resolvidos adequadamente"],
     "SEÇÃO 10 – SITUAÇÕES CRÍTICAS": ["Vivenciei situações graves (agressões, ameaças etc.)", "Passei por situações de risco", "Alguma situação causou impacto significativo"],
     "SEÇÃO 11 – CONDIÇÕES DE EXECUÇÃO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
-    "SEÇÃO 12 – FORMATO DE ATUÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
+    "SEÇÃO 12 – FORMATO DE ATUAÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
 }
 
 respostas_finais = {}
@@ -59,21 +61,18 @@ secoes_respondidas = {}
 
 for titulo, perguntas in secoes_dados.items():
     with st.expander(titulo):
-        # Primeiro carregamos todos os sliders da seção
         for p in perguntas:
             respostas_finais[p] = st.select_slider(p, options=[0, 1, 2, 3, 4], key=f"slider_{p}")
         
-        # Agora colocamos a caixa de confirmação ao final
-        st.write("---")
-        confirmar = st.checkbox(f"Concluí o preenchimento da {titulo}", key=f"check_{titulo}")
-        secoes_respondidas[titulo] = confirmar
+        # Removido a linha divisória e o espaçamento grande
+        # O checkbox agora aparece logo após a última pergunta
+        secoes_respondidas[titulo] = st.checkbox(f"Concluí o preenchimento da {titulo}", key=f"check_{titulo}")
 
 st.divider()
 sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção relevantes:")
 
 # --- LÓGICA DE ENVIO ---
 if st.button("ENVIAR"):
-    # Verificar se todas as seções foram confirmadas
     secoes_faltantes = [s for s, respondida in secoes_respondidas.items() if not respondida]
     
     if secoes_faltantes:
