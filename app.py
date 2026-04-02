@@ -76,7 +76,7 @@ if st.button("ENVIAR"):
     secoes_faltantes = [s for s, respondida in secoes_respondidas.items() if not respondida]
     
     if secoes_faltantes:
-        st.error("⚠️ Atenção! Você precisa marcar a confirmação ao final de cada seção antes de enviar:")
+        st.error("⚠️ Atenção! Verifique o preenchimento de todas as perguntas e a marcação de confirmação ao final de cada seção.")
         for faltante in secoes_faltantes:
             st.write(f"- {faltante}")
     else:
