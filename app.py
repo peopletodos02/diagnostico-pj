@@ -50,46 +50,48 @@ secoes_dados = {
     "SEÇÃO 8 – DEMANDAS E PRAZOS": ["O volume de operações realizadas é compatível com os prazos definidos", "Os prazos são adequados para a execução das entregas"],
     "SEÇÃO 9 – RELACIONAMENTOS": ["Evitei interações devido a conflitos", "Percebo conflitos recorrentes", "Os conflitos são resolvidos adequadamente"],
     "SEÇÃO 10 – SITUAÇÕES CRÍTICAS": ["Vivenciei situações graves (agressões, ameaças etc.)", "Passei por situações de risco", "Alguma situação causou impacto significativo"],
-    "SEÇÃO 11 – CONDIÇÕES DE EXECUCAO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
-    "SEÇÃO 12 – FORMATO DE ATUAÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
+    "SEÇÃO 11 – CONDIÇÕES DE EXECUÇÃO": ["As condições de execução dificultam a comunicação", "A distância impacta a troca de informações"],
+    "SEÇÃO 12 – FORMATO DE ATUÇÃO": ["O formato (remoto/presencial) impacta a comunicação", "Recebo informações suficientes mesmo à distância"]
 }
 
-# Criamos um dicionário para armazenar se a seção foi "visitada"
 respostas_finais = {}
 secoes_respondidas = {}
 
 for titulo, perguntas in secoes_dados.items():
     with st.expander(titulo):
-        # Checkbox invisível para marcar que o usuário abriu e confirmou a seção
-        confirmar = st.checkbox(f"Confirmo que respondi a {titulo}", key=f"check_{titulo}")
-        secoes_respondidas[titulo] = confirmar
-        
+        # Primeiro carregamos todos os sliders da seção
         for p in perguntas:
             respostas_finais[p] = st.select_slider(p, options=[0, 1, 2, 3, 4], key=f"slider_{p}")
+        
+        # Agora colocamos a caixa de confirmação ao final
+        st.write("---")
+        confirmar = st.checkbox(f"Concluí o preenchimento da {titulo}", key=f"check_{titulo}")
+        secoes_respondidas[titulo] = confirmar
 
 st.divider()
 sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção relevantes:")
 
-# --- LÓGICA DE VALIDAÇÃO E ENVIO ---
+# --- LÓGICA DE ENVIO ---
 if st.button("ENVIAR"):
-    # 1. Verificar se todas as seções foram marcadas como confirmadas
+    # Verificar se todas as seções foram confirmadas
     secoes_faltantes = [s for s, respondida in secoes_respondidas.items() if not respondida]
     
     if secoes_faltantes:
-        st.error("⚠️ Atenção! Você precisa revisar e marcar a confirmação nas seguintes seções antes de enviar:")
+        st.error("⚠️ Atenção! Você precisa marcar a confirmação ao final de cada seção antes de enviar:")
         for faltante in secoes_faltantes:
             st.write(f"- {faltante}")
     else:
-        # 2. Se tudo estiver OK, prossegue com o envio
         URL_WEBHOOK = "https://defaulte93279240f9745ba871f4a124f3343.19.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f7d6b663cfc34b1f981db313ccb54778/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=t-SrxxdoHxMTU17DPujee1OCyVh0Z3sC1IC_rC2Bn2E"
         
         if URL_WEBHOOK == "COLE_SUA_URL_AQUI":
-            st.warning("Configure a URL do Power Automate.")
+            st.warning("Por favor, configure a URL do Power Automate no código.")
         else:
             barra = st.progress(0)
             status = st.empty()
+            
             fuso_sp = pytz.timezone('America/Sao_Paulo')
             agora_sp = datetime.now(fuso_sp)
+            
             id_formulario = agora_sp.strftime("%Y%m%d%H%M%S")
             data_hora_envio = agora_sp.strftime("%d/%m/%Y %H:%M:%S")
             
@@ -100,11 +102,15 @@ if st.button("ENVIAR"):
             for i, (p_texto, nota_val) in enumerate(lista_perguntas):
                 percentual = (i + 1) / total
                 barra.progress(percentual)
-                status.text(f"Enviando... {i+1} de {total}")
+                status.text(f"Enviando dados... {i+1} de {total}")
                 
                 payload = {
-                    "ID": id_formulario, "Genero": genero, "Setor": setor,
-                    "Pergunta": p_texto, "Nota": nota_val, "Sugestoes": sugestoes,
+                    "ID": id_formulario, 
+                    "Genero": genero, 
+                    "Setor": setor,
+                    "Pergunta": p_texto, 
+                    "Nota": nota_val, 
+                    "Sugestoes": sugestoes,
                     "Data_Hora": data_hora_envio
                 }
                 try:
@@ -116,6 +122,6 @@ if st.button("ENVIAR"):
             status.empty()
 
             if not erro:
-                st.success("Resposta enviada com sucesso!")
+                st.success("Resposta enviada com sucesso! Agradecemos a sua colaboração.")
             else:
-                st.error("Erro na conexão. Tente novamente.")
+                st.error("Ocorreu um problema ao enviar. Verifique a conexão.")
