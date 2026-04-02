@@ -69,7 +69,7 @@ for titulo, perguntas in secoes_dados.items():
         secoes_respondidas[titulo] = st.checkbox(f"Concluí o preenchimento da {titulo}", key=f"check_{titulo}")
 
 st.divider()
-sugestoes = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção relevantes:")
+sugestoes_texto = st.text_area("SEÇÃO FINAL – Deixe sugestões ou pontos de atenção relevantes:")
 
 # --- LÓGICA DE ENVIO ---
 if st.button("ENVIAR"):
@@ -109,7 +109,7 @@ if st.button("ENVIAR"):
                     "Setor": setor,
                     "Pergunta": p_texto, 
                     "Nota": nota_val, 
-                    "Sugestoes": sugestoes,
+                    "sugestões": sugestoes_texto,
                     "Data_Hora": data_hora_envio
                 }
                 try:
